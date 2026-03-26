@@ -1,24 +1,29 @@
-name: Android CI (Auto Build)
+name: Android CI (Auto Build v4)
 
-on: [push, pull_request] # Koda dokunduğun an build başlasın
+on: [push, workflow_dispatch] # workflow_dispatch sayesinde elle de başlatabilirsin
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout Code
+        uses: actions/checkout@v4 # v3 yerine v4 yaptık
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4 # v3 yerine v4 yaptık
         with:
           java-version: '17'
           distribution: 'temurin'
+          cache: 'gradle' # Build hızlansın diye cache ekledim
 
       - name: Build with Gradle
-        run: chmod +x gradlew && ./gradlew assembleDebug
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug
 
       - name: Upload APK
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4 # İŞTE BURASI: Hatayı veren yer v4 oldu
         with:
-          name: LADB-Debug-APK
+          name: LADB-Build-v4
           path: app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error # Dosya oluşmazsa haber ver
